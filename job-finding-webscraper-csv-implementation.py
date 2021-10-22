@@ -1,3 +1,4 @@
+import csv
 from typing import final
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -26,6 +27,7 @@ searchTerm = input("What job would you like to search for? ")
 jobTitles = []
 jobEmployers = []
 jobLinks = []
+skippedCompanies = []
 
 def indeedCollection():
     #Go to this website
@@ -168,19 +170,40 @@ def reedCollection():
 def printValues():
     #Clears the terminal
     clear()
+    skippedJobCounter = 0
 
     #Prints all of the job titles, employers and links respectively
-    for i in range(len(jobTitles)):
-        print("")
-        print("jobTitles: " + jobTitles[i])
-        print("jobEmployer: " + jobEmployers[i])
-        print("jobLink: " + jobLinks[i])
+    for i in range(len(jobEmployers)):
+        if jobLinks[i] != None:
+            print("")
+            print("jobTitles: " + jobTitles[i])
+            print("jobEmployer: " + jobEmployers[i])
+            print("jobLink: " + jobLinks[i])
+        else:
+            skippedCompanies.append(jobEmployers[i])
+            skippedJobCounter += 1
 
+    print("")
+    print("Number of jobs skipped:", skippedJobCounter)
+    print("Skipped companies:", skippedCompanies)
+
+def csvInteraction():
+    with open("test_jobs.csv", "r") as csv_file:
+        csv_reader = csv.reader(csv_file)
+        next(csv_reader)
+
+        for line in csv_reader:
+            #print(line[1])
+            for job in range(len(jobEmployers)):
+                if jobEmployers[job] == line[1]:
+                    jobLinks[job] = None
+                    break
 
 #Maybe implement an option to input which websites you would like to use
 indeedCollection()
 govCollection()
 reedCollection()
 
+csvInteraction()
 printValues()
 driver.quit()
