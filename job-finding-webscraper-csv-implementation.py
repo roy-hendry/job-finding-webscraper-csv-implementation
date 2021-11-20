@@ -20,14 +20,17 @@ clear = lambda: os.system("cls")
 clear()
 
 #Allows the user to input what type of job they are searching for
-searchTerm = input("What job would you like to search for? ")
-#searchTerm = "graduate software developer"
+#searchTerm = input("What job would you like to search for? ")
+searchTerm = "graduate software engineer"
 
 #Create empty arrays of each of the types of data we want to collect about the job so we can append to them later
 jobTitles = []
 jobEmployers = []
 jobLinks = []
 skippedCompanies = []
+
+#Creating the hashtable so that we can keep a collection of all the jobs we've seen before
+jobDict = {}
 
 def indeedCollection():
     #Go to this website
@@ -188,16 +191,20 @@ def printValues():
     print("Skipped companies:", skippedCompanies)
 
 def csvInteraction():
-    with open("test_jobs.csv", "r") as csv_file:
+    with open("C:\\Users\Royston\Desktop\Jobs_applied_to.csv", "r") as csv_file:
         csv_reader = csv.reader(csv_file)
         next(csv_reader)
 
+        #Check through all of the lines in the CSV file for job employers and add them to the dictionary
         for line in csv_reader:
-            #print(line[1])
-            for job in range(len(jobEmployers)):
-                if jobEmployers[job] == line[1]:
-                    jobLinks[job] = None
-                    break
+            jobDict.update({str(line): line[1]})
+
+        #If the employer is found when looking through the job list then make the link NoneType so it is ignored when
+        # checking through the printValues method
+        for employer in range(len(jobEmployers)):
+            if jobEmployers[employer] in jobDict.values():
+                jobLinks[employer] = None
+                #break
 
 #Maybe implement an option to input which websites you would like to use
 indeedCollection()
